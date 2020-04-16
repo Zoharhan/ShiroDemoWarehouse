@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -23,8 +24,6 @@ public class LoginController {
     @ResponseBody
     public String toLogin(String email, String pswd, Model model){
         UsernamePasswordToken token = new UsernamePasswordToken(email, pswd);
-
-        System.out.println(token.getUsername()+"\t"+token.getPassword());
         Subject subject = SecurityUtils.getSubject();
         try {
             subject.login(token);
@@ -49,7 +48,7 @@ public class LoginController {
         return "login";
     }
 
-    @PostMapping("/unauth")
+    @RequestMapping("/unauth")
     public String unauth(Model model){
         SecurityUtils.getSubject().logout();
         model.addAttribute("msg","未授权");

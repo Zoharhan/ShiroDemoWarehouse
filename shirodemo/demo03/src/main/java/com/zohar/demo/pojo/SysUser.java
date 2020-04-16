@@ -2,10 +2,12 @@ package com.zohar.demo.pojo;
 
 import com.alibaba.fastjson.JSONObject;
 
-public class SysUser {
+import java.io.Serializable;
+
+public class SysUser implements Serializable {
     private Integer id;
 
-    private String  nickname;
+    private String nickname;
 
     private String email;
 

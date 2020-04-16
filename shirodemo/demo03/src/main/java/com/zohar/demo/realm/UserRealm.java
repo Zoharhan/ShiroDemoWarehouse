@@ -1,15 +1,21 @@
 package com.zohar.demo.realm;
 
+import com.zohar.demo.enums.MyShiroStatus;
 import com.zohar.demo.pojo.SysUser;
+import com.zohar.demo.pojo.SysUserOnline;
 import com.zohar.demo.service.SysPermissionService;
 import com.zohar.demo.service.SysRoleService;
 import com.zohar.demo.service.SysUserService;
+import com.zohar.demo.session.OnlineSession;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -35,8 +41,6 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-//        SpringBeanPreparerFactory.getApplicationContext().getBean();
-        System.out.println("UserRealm.doGetAuthorizationInfo");
         SysUser user = (SysUser) SecurityUtils.getSubject().getPrincipal();
         System.out.println("SysUser:\t" + user);
 
@@ -73,7 +77,6 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 
-        System.out.println("UserRealm.doGetAuthenticationInfo");
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
         String username = token.getUsername();
 
@@ -88,7 +91,15 @@ public class UserRealm extends AuthorizingRealm {
         if (null == user) {
             throw new AccountException("账号或密码错误");
         }
+
         System.out.println("登录成功");
+        Subject subject = SecurityUtils.getSubject();
+
+        Session session = subject.getSession();
+        System.out.println(session.getId());
+        session.setAttribute("userstatus", MyShiroStatus.on_line);
+        session.setAttribute("loginname", user.getNickname());
+
         return new SimpleAuthenticationInfo(user, password, getName());
     }
 }

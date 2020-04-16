@@ -14,8 +14,6 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public SysUser login(String username, String password) {
-
-
         return userMapper.login(username,password);
     }
 }
